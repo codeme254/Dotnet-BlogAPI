@@ -15,12 +15,13 @@ public class AuthController(AppDbContext appDbContext, IdGenerator idGen) : Cont
     [HttpPost("Register")]
     public async Task<ActionResult> Register([FromBody] RegisterDTO registerDTO)
     {
+        string passwordHash = BCrypt.Net.BCrypt.HashPassword(registerDTO.Password);
         var user = new User
         {
             UserId = _idGen.CreateId(),
             Username = registerDTO.Username,
             Email = registerDTO.Email,
-            PasswordHash = registerDTO.Password,
+            PasswordHash = passwordHash,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
