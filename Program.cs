@@ -1,4 +1,5 @@
 using BlogAPI.Data;
+using BlogAPI.Middlewares;
 using BlogAPI.Services;
 using BlogAPI.Services.Implementations;
 using IdGen;
@@ -8,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configure the Database Context
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseNpgsql(connectionString);
@@ -23,6 +25,9 @@ builder.Services.AddControllers();
 var app = builder.Build();
 
 app.MapGet("/", () => "Welcome to BlogAPI");
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+
 app.MapControllers();
 
 app.Run();
