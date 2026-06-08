@@ -17,3 +17,4 @@ Postgresql DB Connection String:
 ```bash
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Host=localhost;Port=5432;Database=BlogDB;Username=USERNAME;Password=PASSWORD;"
 ```
+Replace USERNAME with your PostgreSQL username and PASSWORD with your PostgreSQL password.
