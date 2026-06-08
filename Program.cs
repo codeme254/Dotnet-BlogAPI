@@ -1,6 +1,8 @@
 using BlogAPI.Data;
 using BlogAPI.DTOs;
 using BlogAPI.Middlewares;
+using BlogAPI.Repositories;
+using BlogAPI.Repositories.Implementations;
 using BlogAPI.Services;
 using BlogAPI.Services.Implementations;
 using BlogAPI.Validators;
@@ -26,6 +28,9 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 // Validators
 builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
+
+// Repositories
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddControllers();
 var app = builder.Build();

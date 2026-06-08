@@ -1,13 +1,13 @@
-using BlogAPI.Data;
 using BlogAPI.DTOs;
 using BlogAPI.Models;
+using BlogAPI.Repositories;
 using IdGen;
 
 namespace BlogAPI.Services.Implementations;
 
-public class AuthService(AppDbContext dbContext, IdGenerator idGen) : IAuthService
+public class AuthService(IUserRepository userRepository, IdGenerator idGen) : IAuthService
 {
-    private readonly AppDbContext _dbContext = dbContext;
+    private readonly IUserRepository _userRepository = userRepository;
     private readonly IdGenerator _idGen = idGen;
 
     public async Task RegisterAsync(RegisterDTO registerDTO)
@@ -23,7 +23,7 @@ public class AuthService(AppDbContext dbContext, IdGenerator idGen) : IAuthServi
             UpdatedAt = DateTime.UtcNow
         };
 
-        await _dbContext.AddAsync(user);
-        await _dbContext.SaveChangesAsync();
+        await _userRepository.AddAsync(user);
+        await _userRepository.SaveChangesAsync();
     }
 }
