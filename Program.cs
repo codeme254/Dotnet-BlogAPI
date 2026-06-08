@@ -1,7 +1,10 @@
 using BlogAPI.Data;
+using BlogAPI.DTOs;
 using BlogAPI.Middlewares;
 using BlogAPI.Services;
 using BlogAPI.Services.Implementations;
+using BlogAPI.Validators;
+using FluentValidation;
 using IdGen;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +23,9 @@ builder.Services.AddSingleton(_ => new IdGenerator(0));
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// Validators
+builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
 
 builder.Services.AddControllers();
 var app = builder.Build();
