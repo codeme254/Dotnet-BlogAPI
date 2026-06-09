@@ -10,7 +10,8 @@ public class AuthService(
     IdGenerator idGen, IEmailService emailService,
     IVerificationTokenService verificationTokenService,
     IEmailTemplateService emailTemplateService,
-    IConfiguration configuration
+    IConfiguration configuration,
+    IVerificationTokenRepository verificationTokenRepository
 ) : IAuthService
 {
     private readonly IUserRepository _userRepository = userRepository;
@@ -19,6 +20,7 @@ public class AuthService(
     private readonly IVerificationTokenService _verificationTokenService = verificationTokenService;
     private readonly IEmailTemplateService _emailTemplateService = emailTemplateService;
     private readonly IConfiguration _configuration = configuration;
+    private readonly IVerificationTokenRepository _verificationTokenRepository = verificationTokenRepository;
 
     public async Task RegisterAsync(RegisterDTO registerDTO)
     {
@@ -40,5 +42,27 @@ public class AuthService(
         var emailBody = _emailTemplateService.GetVerificationEmailBody(verificationUrl);
 
         await _emailService.SendEmailAsync(user.Email, "Welcome to Blog", emailBody);
+    }
+
+    public async Task VerifyEmailAsync(string token)
+    {
+        var verificationToken = await _verificationTokenRepository.GetVerificationTokenAsync(token);
+
+        if (verificationToken == null)
+        {
+            throw new Exception("Token not found");
+        }
+
+        var user = await _userRepository.GetUserAsync(verificationToken.Email);
+
+        if (user == null)
+        {
+            throw new Exception("User not found");
+        }
+
+        user.IsVerified = true;
+        _verificationTokenRepository.DeleteVerificationToken(verificationToken);
+        await _userRepository.SaveChangesAsync();
+        await _verificationTokenRepository.SaveChangesAsync();
     }
 }

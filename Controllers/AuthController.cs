@@ -34,4 +34,24 @@ public class AuthController(IAuthService authService, IValidator<RegisterDTO> va
             Message = "User created successfully"
         });
     }
+
+    [HttpGet("verify-email")]
+    public async Task<ActionResult> VerifyEmail([FromQuery] string token)
+    {
+        if (token == null)
+        {
+            return BadRequest(new
+            {
+                Message = "Email validation failed",
+                Errors = new List<string>() { "Token is required" }
+            });
+        }
+
+        await _authService.VerifyEmailAsync(token);
+
+        return Ok(new
+        {
+            Message = "Email verified successfully"
+        });
+    }
 }
