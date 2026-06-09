@@ -5,10 +5,11 @@ using IdGen;
 
 namespace BlogAPI.Services.Implementations;
 
-public class AuthService(IUserRepository userRepository, IdGenerator idGen) : IAuthService
+public class AuthService(IUserRepository userRepository, IdGenerator idGen, IEmailService emailService) : IAuthService
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IdGenerator _idGen = idGen;
+    private readonly IEmailService _emailService = emailService;
 
     public async Task RegisterAsync(RegisterDTO registerDTO)
     {
@@ -25,5 +26,12 @@ public class AuthService(IUserRepository userRepository, IdGenerator idGen) : IA
 
         await _userRepository.AddAsync(user);
         await _userRepository.SaveChangesAsync();
+
+        await _emailService.SendEmailAsync(user.Email, "Welcome to Blog",
+        """
+        <h1>Welcome to Blog.</h1>
+
+        You are going to like it here.
+        """);
     }
 }

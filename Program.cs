@@ -25,6 +25,7 @@ builder.Services.AddSingleton(_ => new IdGenerator(0));
 
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // Validators
 builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
