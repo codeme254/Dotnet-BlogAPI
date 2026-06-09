@@ -26,12 +26,14 @@ builder.Services.AddSingleton(_ => new IdGenerator(0));
 // Services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IVerificationTokenService, VerificationTokenService>();
 
 // Validators
 builder.Services.AddScoped<IValidator<RegisterDTO>, RegisterDTOValidator>();
 
 // Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IVerificationTokenRepository, VerificationTokenRepository>();
 
 builder.Services.AddControllers();
 var app = builder.Build();

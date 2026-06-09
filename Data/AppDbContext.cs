@@ -6,6 +6,7 @@ namespace BlogAPI.Data;
 public class AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : DbContext(dbContextOptions)
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<VerificationToken> VerificationTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,15 @@ public class AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : DbC
 
             entity.Property(col => col.PasswordHash)
             .IsRequired();
+        });
+
+        modelBuilder.Entity<VerificationToken>(entity =>
+        {
+            entity.ToTable("VerificationTokens");
+
+            entity.HasIndex(col => col.Token)
+            .IsUnique()
+            .HasDatabaseName("IX_VerificationTokens_Token");
         });
     }
 }
