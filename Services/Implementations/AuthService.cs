@@ -8,13 +8,17 @@ namespace BlogAPI.Services.Implementations;
 public class AuthService(
     IUserRepository userRepository,
     IdGenerator idGen, IEmailService emailService,
-    IVerificationTokenService verificationTokenService
+    IVerificationTokenService verificationTokenService,
+    IEmailTemplateService emailTemplateService,
+    IConfiguration configuration
 ) : IAuthService
 {
     private readonly IUserRepository _userRepository = userRepository;
     private readonly IdGenerator _idGen = idGen;
     private readonly IEmailService _emailService = emailService;
     private readonly IVerificationTokenService _verificationTokenService = verificationTokenService;
+    private readonly IEmailTemplateService _emailTemplateService = emailTemplateService;
+    private readonly IConfiguration _configuration = configuration;
 
     public async Task RegisterAsync(RegisterDTO registerDTO)
     {
@@ -32,13 +36,9 @@ public class AuthService(
 
         var token = await _verificationTokenService.CreateVerificationToken(user.Email);
 
-        await _emailService.SendEmailAsync(user.Email, "Welcome to Blog",
-        $"""
-        <h1>Welcome to Blog.</h1>
+        var verificationUrl = $"{_configuration["ClientURL"]}api/auth/verify-email?token={token}";
+        var emailBody = _emailTemplateService.GetVerificationEmailBody(verificationUrl);
 
-        You are going to like it here.
-
-        <p>Your verification token is <em>{token}</em></p>
-        """);
+        await _emailService.SendEmailAsync(user.Email, "Welcome to Blog", emailBody);
     }
 }
