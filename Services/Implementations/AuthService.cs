@@ -73,7 +73,7 @@ public class AuthService(
         var token = await _verificationTokenService.CreateVerificationToken(resendVerificationTokenDTO.Email);
 
         var verificationUrl = $"{_configuration["ClientURL"]}api/auth/verify-email?token={token}";
-        var emailBody = _emailTemplateService.GetVerificationEmailBody(verificationUrl);
+        var emailBody = _emailTemplateService.GetRetryVerificationEmailBody(verificationUrl);
 
         await _emailService.SendEmailAsync(resendVerificationTokenDTO.Email, "Verify Your Email Address", emailBody);
     }

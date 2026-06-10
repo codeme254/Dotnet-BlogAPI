@@ -14,4 +14,10 @@ public class EmailTemplateService(IWebHostEnvironment env) : IEmailTemplateServi
         return LoadTemplate("VerificationEmail.html")
         .Replace("{{VERIFICATION_URL}}", verificationUrl);
     }
+
+    public string GetRetryVerificationEmailBody(string verificationUrl)
+    {
+        return LoadTemplate("RetryVerificationEmail.html")
+        .Replace("{{VERIFICATION_URL}}", verificationUrl);
+    }
 }
