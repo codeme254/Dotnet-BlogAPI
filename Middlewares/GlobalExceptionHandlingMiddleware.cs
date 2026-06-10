@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text.Json;
+using BlogAPI.Exceptions;
 
 namespace BlogAPI.Middlewares;
 
@@ -31,6 +32,25 @@ public class GlobalExceptionHandlingMiddleware(
         var statusCode = (int)HttpStatusCode.InternalServerError;
         var error = "Internal Server Error";
         var message = "An unexpected error occurred. Please try again";
+
+        switch (exception)
+        {
+            case TokenNotFoundException tokenNotFoundException:
+                statusCode = (int)HttpStatusCode.NotFound;
+                error = tokenNotFoundException.Message;
+                message = "Something went wrong";
+                break;
+            case UserNotFoundException userNotFoundException:
+                statusCode = (int)HttpStatusCode.NotFound;
+                error = userNotFoundException.Message;
+                message = "Something went wrong";
+                break;
+            case VerificationTokenExpiredException verificationTokenExpiredException:
+                statusCode = (int)HttpStatusCode.NotFound;
+                error = verificationTokenExpiredException.Message;
+                message = "This verification token has expired. Please request for a new one";
+                break;
+        }
 
         var errorResponse = new
         {

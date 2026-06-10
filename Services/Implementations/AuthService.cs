@@ -1,4 +1,5 @@
 using BlogAPI.DTOs;
+using BlogAPI.Exceptions;
 using BlogAPI.Models;
 using BlogAPI.Repositories;
 using IdGen;
@@ -46,21 +47,16 @@ public class AuthService(
 
     public async Task VerifyEmailAsync(string token)
     {
-        var verificationToken = await _verificationTokenRepository.GetVerificationTokenAsync(token);
+        var verificationToken = await _verificationTokenRepository.GetVerificationTokenAsync(token)
+        ?? throw new TokenNotFoundException("Verification token not found");
 
-        if (verificationToken == null)
+        if (verificationToken.ExpiresAt < DateTime.UtcNow)
         {
-            throw new Exception("Token not found");
+            throw new VerificationTokenExpiredException("Verification token has expired.");
         }
 
-        var user = await _userRepository.GetUserAsync(verificationToken.Email);
-
-        if (user == null)
-        {
-            throw new Exception("User not found");
-        }
-
-        // TODO: Check if token is expired
+        var user = await _userRepository.GetUserAsync(verificationToken.Email)
+        ?? throw new UserNotFoundException("User not found");
 
         user.IsVerified = true;
         _verificationTokenRepository.DeleteVerificationToken(verificationToken);
