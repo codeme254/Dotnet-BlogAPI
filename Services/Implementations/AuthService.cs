@@ -60,9 +60,21 @@ public class AuthService(
             throw new Exception("User not found");
         }
 
+        // TODO: Check if token is expired
+
         user.IsVerified = true;
         _verificationTokenRepository.DeleteVerificationToken(verificationToken);
         await _userRepository.SaveChangesAsync();
         await _verificationTokenRepository.SaveChangesAsync();
+    }
+
+    public async Task ResendVerificationTokenAsync(ResendVerificationTokenDTO resendVerificationTokenDTO)
+    {
+        var token = await _verificationTokenService.CreateVerificationToken(resendVerificationTokenDTO.Email);
+
+        var verificationUrl = $"{_configuration["ClientURL"]}api/auth/verify-email?token={token}";
+        var emailBody = _emailTemplateService.GetVerificationEmailBody(verificationUrl);
+
+        await _emailService.SendEmailAsync(resendVerificationTokenDTO.Email, "Verify Your Email Address", emailBody);
     }
 }

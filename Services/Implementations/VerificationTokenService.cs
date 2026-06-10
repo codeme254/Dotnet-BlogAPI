@@ -11,6 +11,15 @@ public class VerificationTokenService(IdGenerator idGen, IVerificationTokenRepos
 
     public async Task<string> CreateVerificationToken(string email)
     {
+        // Check if this email already has a token
+        // if it already has a verification token, delete it and create a new one
+        var existing = await _tokenRepository.GetVerificationTokenAsync(email);
+        if (existing != null)
+        {
+            _tokenRepository.DeleteVerificationToken(existing);
+            await _tokenRepository.SaveChangesAsync();
+        }
+
         string token = Guid.NewGuid().ToString();
         var verificationToken = new VerificationToken
         {

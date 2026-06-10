@@ -17,10 +17,10 @@ public class VerificationTokenRepository(AppDbContext dbContext) : IVerification
         _dbContext.VerificationTokens.Remove(verificationToken);
     }
 
-    public async Task<VerificationToken?> GetVerificationTokenAsync(string token)
+    public async Task<VerificationToken?> GetVerificationTokenAsync(string email)
     {
         return await _dbContext.VerificationTokens
-        .FirstOrDefaultAsync(t => t.Token == token);
+        .FirstOrDefaultAsync(t => t.Email == email);
     }
 
     public async Task SaveChangesAsync()

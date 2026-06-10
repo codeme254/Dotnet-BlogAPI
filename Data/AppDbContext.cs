@@ -46,6 +46,10 @@ public class AppDbContext(DbContextOptions<AppDbContext> dbContextOptions) : DbC
             entity.HasIndex(col => col.Token)
             .IsUnique()
             .HasDatabaseName("IX_VerificationTokens_Token");
+
+            entity.HasIndex(col => col.Email)
+            .IsUnique()
+            .HasDatabaseName("IX_VerificationTokens_Email");
         });
     }
 }

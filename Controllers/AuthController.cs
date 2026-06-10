@@ -54,4 +54,23 @@ public class AuthController(IAuthService authService, IValidator<RegisterDTO> va
             Message = "Email verified successfully"
         });
     }
+
+    [HttpPost("resend-verification-token")]
+    public async Task<ActionResult> ResendVerificationToken([FromBody] ResendVerificationTokenDTO resendVerificationTokenDTO)
+    {
+        if (resendVerificationTokenDTO.Email == null)
+        {
+            return BadRequest(new
+            {
+                Message = "Email verification process failed",
+                Errors = new List<string>() { "A valid email address is required to send a verification email" }
+            });
+        }
+
+        await _authService.ResendVerificationTokenAsync(resendVerificationTokenDTO);
+        return Ok(new
+        {
+            Message = $"An email has been sent to {resendVerificationTokenDTO.Email}"
+        });
+    }
 }

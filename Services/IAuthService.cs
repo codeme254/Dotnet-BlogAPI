@@ -6,4 +6,5 @@ public interface IAuthService
 {
     Task RegisterAsync(RegisterDTO registerDTO);
     Task VerifyEmailAsync(string token);
+    Task ResendVerificationTokenAsync(ResendVerificationTokenDTO resendVerificationTokenDTO);
 }
