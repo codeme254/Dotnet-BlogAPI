@@ -13,10 +13,10 @@ public class UserRepository(AppDbContext dbContext) : IUserRepository
         await _dbContext.Users.AddAsync(user);
     }
 
-    public async Task<User?> GetUserAsync(string email)
+    public async Task<User?> GetUserAsync(string identifier)
     {
         return await _dbContext.Users
-        .FirstOrDefaultAsync(u => u.Email == email);
+        .FirstOrDefaultAsync(u => u.Email == identifier || u.Username == identifier);
     }
 
     public async Task SaveChangesAsync()

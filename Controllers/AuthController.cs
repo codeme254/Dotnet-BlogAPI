@@ -73,4 +73,28 @@ public class AuthController(IAuthService authService, IValidator<RegisterDTO> va
             Message = $"An email has been sent to {resendVerificationTokenDTO.Email}"
         });
     }
+
+    [HttpPost("Login")]
+    public async Task<ActionResult> Login([FromBody] LoginDTO loginDTO)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState
+            .Where(x => x.Value?.Errors.Count > 0)
+            .SelectMany(x => x.Value!.Errors.Select(e => e.ErrorMessage));
+
+            return BadRequest(new
+            {
+                Status = StatusCodes.Status400BadRequest,
+                Errors = errors
+            });
+        }
+
+        await _authService.LoginAsync(loginDTO);
+
+        return Ok(new
+        {
+            Message = "Logging you in shortly"
+        });
+    }
 }

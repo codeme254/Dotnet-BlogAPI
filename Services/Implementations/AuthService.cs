@@ -73,4 +73,23 @@ public class AuthService(
 
         await _emailService.SendEmailAsync(resendVerificationTokenDTO.Email, "Verify Your Email Address", emailBody);
     }
+
+    public async Task<User> LoginAsync(LoginDTO loginDTO)
+    {
+        var user = await _userRepository.GetUserAsync(loginDTO.Identifier)
+        ?? throw new InvalidLoginCredentialsException("Invalid login credentials");
+
+        if (user.IsVerified == false)
+        {
+            throw new EmailNotVerifiedException("Please verify your email address");
+        }
+
+        bool passwordsMatch = BCrypt.Net.BCrypt.Verify(loginDTO.Password, user.PasswordHash);
+
+        if (passwordsMatch == false)
+        {
+            throw new InvalidLoginCredentialsException("Invalid login credentials");
+        }
+        return user;
+    }
 }

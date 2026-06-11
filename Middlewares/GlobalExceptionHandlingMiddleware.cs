@@ -50,6 +50,16 @@ public class GlobalExceptionHandlingMiddleware(
                 error = verificationTokenExpiredException.Message;
                 message = "This verification token has expired. Please request for a new one";
                 break;
+            case InvalidLoginCredentialsException invalidLoginCredentialsException:
+                statusCode = (int)HttpStatusCode.Unauthorized;
+                error = invalidLoginCredentialsException.Message;
+                message = "Login failed";
+                break;
+            case EmailNotVerifiedException emailNotVerifiedException:
+                statusCode = (int)HttpStatusCode.Unauthorized;
+                error = emailNotVerifiedException.Message;
+                message = "Login failed";
+                break;
         }
 
         var errorResponse = new
