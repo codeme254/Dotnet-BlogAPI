@@ -90,11 +90,11 @@ public class AuthController(IAuthService authService, IValidator<RegisterDTO> va
             });
         }
 
-        await _authService.LoginAsync(loginDTO);
+        var token = await _authService.LoginAsync(loginDTO);
 
         return Ok(new
         {
-            Message = "Logging you in shortly"
+            AuthToken = token
         });
     }
 }

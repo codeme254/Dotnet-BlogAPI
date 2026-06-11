@@ -12,7 +12,8 @@ public class AuthService(
     IVerificationTokenService verificationTokenService,
     IEmailTemplateService emailTemplateService,
     IConfiguration configuration,
-    IVerificationTokenRepository verificationTokenRepository
+    IVerificationTokenRepository verificationTokenRepository,
+    IJwtTokenService jwtTokenService
 ) : IAuthService
 {
     private readonly IUserRepository _userRepository = userRepository;
@@ -22,6 +23,7 @@ public class AuthService(
     private readonly IEmailTemplateService _emailTemplateService = emailTemplateService;
     private readonly IConfiguration _configuration = configuration;
     private readonly IVerificationTokenRepository _verificationTokenRepository = verificationTokenRepository;
+    private readonly IJwtTokenService _jwtTokenService = jwtTokenService;
 
     public async Task RegisterAsync(RegisterDTO registerDTO)
     {
@@ -74,7 +76,7 @@ public class AuthService(
         await _emailService.SendEmailAsync(resendVerificationTokenDTO.Email, "Verify Your Email Address", emailBody);
     }
 
-    public async Task<User> LoginAsync(LoginDTO loginDTO)
+    public async Task<string> LoginAsync(LoginDTO loginDTO)
     {
         var user = await _userRepository.GetUserAsync(loginDTO.Identifier)
         ?? throw new InvalidLoginCredentialsException("Invalid login credentials");
@@ -90,6 +92,8 @@ public class AuthService(
         {
             throw new InvalidLoginCredentialsException("Invalid login credentials");
         }
-        return user;
+
+        var token = _jwtTokenService.GenerateJwtToken(user);
+        return token;
     }
 }
